@@ -203,6 +203,4 @@ Built by Amrit Rosell with extensive collaboration with Claude (Anthropic).
 
 This repository (`CrateRelease`) is a **binary distribution channel** for Crate. The source code lives in a separate private repository and is not currently public.
 
-The DMG distributed here is free to download and use. Redistribution, modification, or reverse-engineering of the binary is not permitted without prior permission from the author. Contact via the issues page if you have questions about usage, integration, or collaboration.
-
-This may change in future releases.
+The DMG distributed here is free to download and use.
