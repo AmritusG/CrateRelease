@@ -1,123 +1,81 @@
-# Crate
+# MaCrate
 
-A native macOS clip library for VJs and visual artists. Browse, search, tag, and brief your video clips — built for live-performance workflows with Resolume Arena and similar tools.
+A clip library for VJs and visual artists on macOS. Point it at your video folders and browse, search, tag, rate,
+brief and measure your clips, then send them to Resolume Arena. No import step: MaCrate watches the folders and keeps
+up as files change.
 
----
+**Current version: 0.17.0** — [download MaCrate-0.17.0.dmg](https://github.com/AmritusG/CrateRelease/releases/download/v0.17.0/MaCrate-0.17.0.dmg)
+([SHA-256](https://github.com/AmritusG/CrateRelease/releases/download/v0.17.0/MaCrate-0.17.0.dmg.sha256),
+[release notes](https://github.com/AmritusG/CrateRelease/releases/tag/v0.17.0)).
+Universal (Apple Silicon and Intel), macOS 14 or later, signed and notarized.
 
-## What Crate does
-
-### Browse your video library
-
-Point Crate at your video folders — single files, nested folders, or external drives. It indexes every video, generates thumbnails, and presents them in a fast scrollable grid with adjustable cell size. The thumbnail engine uses Metal-accelerated decoding so even large libraries on slow drives stay responsive.
-
-You can browse by folder (sidebar navigation) or operate in library mode (search across the entire indexed collection regardless of folder).
-
-### Find clips instantly
-
-Full-text search across filenames, tags, and brief content. Filter by:
-
-- **Rating** (1-5 stars)
-- **Tags** (chip-based filters, combinable)
-- **BPM** (with tap-tempo input)
-- **Mood** (freeform field)
-- **Genre** (freeform field)
-- **Energy level** (slider field)
-- **Duplicates** (show only clips that have identical-content duplicates)
-
-Filter chips combine with text search — narrow to "all my high-energy clips matching 'neon' that have duplicates" in one query.
-
-### Tag and rate
-
-Per-clip metadata:
-
-- **5-star rating**
-- **Freeform tags** (with autocomplete from existing tags)
-- **BPM** with tap-tempo
-- **Mood** (single freeform string)
-- **Genre** (single freeform string)
-- **Energy level** (slider 0–100)
-- **Brief** (freeform description — usually 3-7 keywords, see below)
-
-All metadata is stored alongside the clip in `.crate-meta.json` sidecar files. Portable across machines, version-controllable, never locked into a proprietary database. If you delete Crate's library database, the sidecars are the source of truth — re-indexing rebuilds the database from disk.
-
-### AI-generated briefs
-
-Generate descriptive briefs for clips using Anthropic's Claude. Briefs are short keyword descriptions of the clip's visual content — for example: `vibrant geometric kaleidoscopic retro animated` or `dark biomechanical chrome metallic intense`.
-
-Three ways to generate briefs:
-
-1. **Single clip** — right-click any clip → "Generate Brief". Useful for one-off curation.
-2. **Bulk: this folder** — toolbar button "Brief Folder (N, ~$X.XX)" briefs every un-briefed clip in the current folder. Pre-flight dialog shows count and cost estimate before committing.
-3. **Bulk: current matches** — when in library mode (search/filter active), the toolbar button reads "Brief Matches (N, ~$X.XX)" and operates on the current filtered set.
-
-**Duplicate-aware deduplication.** Crate hashes clip content. When the same clip exists in multiple locations (cross-drive copies, renamed duplicates), bulk-brief generates the brief once per unique content hash and fans the result out to every sibling row. A 1,000-clip library with 200 duplicates costs you 800 API calls, not 1,000.
-
-**Bring your own API key.** Get an Anthropic API key at https://console.anthropic.com. Crate stores it in your Mac's Keychain — never synced to iCloud, never logged, never echoed to disk.
-
-### Detect duplicates
-
-Crate hashes file content using xxHash3-128 for fast cross-drive identification. When the same clip exists in multiple locations:
-
-- A duplicate badge appears on the cell of every affected clip.
-- The info panel shows "N duplicates elsewhere" with clickable paths.
-- A filter chip "Has duplicates" surfaces only duplicated clips for cleanup workflows.
-- A library-wide "View All Duplicates…" sheet (Cmd-J menu) shows every duplicate group at once.
-- Tags and briefs cascade: tag one duplicate, all instances stay searchable; brief one, all siblings inherit the brief.
-
-### Import existing briefs
-
-If you've used external tools to generate briefs, or are migrating from another system, import them via **File > Import Briefs…** (Cmd-Shift-I).
-
-Supported formats:
-
-- **JSON, three shapes:**
-  - Flat object: `{ "clip_id_hash": "brief text", ... }`
-  - Array of objects: `[{ "clip_id": "...", "brief": "..." }, ...]`
-  - Wrapped: `{ "briefs": [{...}, ...] }`
-- **CSV** with a `brief` column header. Field aliases: `clip_id` / `clipID`, `current_path` / `path` / `file_path`, `brief`.
-
-Matching strategy: clip_id (content hash) first, with fan-out to every row sharing the same content; path fallback if no clip_id match. Pre-flight dialog shows match counts and what will be filled vs. skipped vs. unmatched. Optional "Overwrite existing briefs" checkbox.
+0.17.0 is MaCrate rebuilt in Rust on the cross-platform core it shares with Glance. It reads and writes the same
+library as 0.16.4, so updating needs no migration and going back keeps everything.
 
 ---
 
-## What a user can expect
+## What MaCrate does
 
-- **Native macOS app.** Real AppKit/SwiftUI, not Electron. Fast, properly themed, integrates with macOS conventions (Cmd-,, Cmd-J, drag-and-drop, NSOpenPanel, Quick Look, dark/light mode).
-- **Local-first.** All your library data stays on your machine. The only outbound network traffic is API calls to Anthropic when you generate briefs — and only with your explicit consent and your own API key.
-- **No subscription, no account, no telemetry.** Download, run, use. Your library is yours.
-- **DXV2.2 / DXV3 / HAP-aware.** Crate is built knowing VJ workflows. DXV2.2, DXV3, and HAP clips (Resolume's preferred codecs) get proper handling, including high-performance Metal-based thumbnail decoding. Standard codecs (H.264, ProRes, HEVC, etc.) work too via AVFoundation.
-- **Apple Silicon native.** Built for M1/M2/M3/M4 Macs. Intel Macs are not currently tested.
-- **macOS 14+ required.** Built against modern SwiftUI; earlier macOS versions are not supported.
+### Browse
+- Add any number of folders or drives (**Add Folder…** in the sidebar). MaCrate indexes every video in them, makes
+  thumbnails and shows them in a grid whose cell size and fields you choose (**View ▸ Settings**, `Cmd-J`).
+- Browse by folder in the sidebar, or search and filter across the whole library.
+- Press `Space` to preview a clip: it plays from the first frame and loops, with sound, frame by frame if you step.
+- DXV (DXT1, DXT5, YCG6, YG10) and HAP (Hap1, Hap5, HapY, HapM, HapA) are first-class; H.264, HEVC, ProRes and the
+  other formats macOS plays work too. Alpha clips show over a checkerboard, with Resolume's Alpha Type choice for DXV.
+
+### Find
+Full-text search over file names, tags, mood, genre and briefs, combined with filters for rating, tags, BPM, mood,
+genre, energy, duplicates and the measured values (loops only, cycle length, cuts, flashes, motion, text and more).
+Sort by name, date, duration, rating, BPM, energy, loop score, cycle or at random. Save a search and its sort as a
+preset.
+
+### Tag, rate and brief
+Per clip: a 5-star rating, tags, BPM, mood, genre, energy (0–10) and a brief (a few keywords). Briefs can be written by Anthropic's Claude with your own API key (one clip, a folder, or the
+current matches; a pre-flight shows the count and the estimated cost; identical copies share one request) or
+imported from JSON or CSV (**File ▸ Import Briefs…**, `Cmd-Shift-I`). The key is kept in your Mac's Keychain.
+
+### Stashes
+Collect clips from anywhere in the library into named stashes, in your own order. A stash is saved in a
+`.crate-stashes.json` file in the library folder it belongs to, so it travels with the drive.
+
+### Measurements
+MaCrate's scanner measures each clip: whether it loops and how well, its cycle length, cuts, flashes, flicker,
+motion, how much of it is black, and whether it shows text. Filter and sort by any of them.
+
+### Duplicates
+Clips are identified by content, so copies across folders and drives are found. A badge marks them, the info panel
+lists the other copies, and tags and briefs carry across them.
+
+### Send to Arena
+Right-click a clip (or a selection) ▸ **Send to Arena** to load it into a layer and column of a running Resolume
+Arena, locally or over the network, optionally triggering it after it loads.
 
 ---
 
 ## Installation
 
-1. Download `Crate-0.6.33.2.dmg` from the [latest release](https://github.com/AmritusG/CrateRelease/releases/latest).
-2. (Optional) Verify the SHA-256 checksum:
+1. Download `MaCrate-0.17.0.dmg` from the [latest release](https://github.com/AmritusG/CrateRelease/releases/latest).
+2. (Optional) Verify it:
    ```bash
-   shasum -a 256 Crate-0.6.33.2.dmg
+   shasum -a 256 MaCrate-0.17.0.dmg
    ```
-   Compare against the `Crate-0.6.33.2.dmg.sha256` file in the release.
-3. Open the DMG.
-4. Drag `Crate.app` to your `Applications` folder.
-5. Eject the DMG.
-6. Launch Crate from Applications.
+   Compare with `MaCrate-0.17.0.dmg.sha256` in the release.
+3. Open the DMG and drag **MaCrate** to **Applications**.
 
-The DMG is signed with an Apple Developer ID (Team `3A3L2C6DFB`) and notarized by Apple, so Gatekeeper accepts it without warnings on first launch.
+The DMG and the app are signed with an Apple Developer ID (Team `3A3L2C6DFB`) and notarized by Apple, so Gatekeeper
+accepts them on first launch.
+
+To go back to the Swift version, install [0.16.4](https://github.com/AmritusG/CrateRelease/releases/tag/v0.16.4)
+over it; your library and settings stay as they are.
 
 ---
 
-## Setting up brief generation (optional)
+## Known issues
 
-If you want AI-generated briefs:
-
-1. Open Crate Settings (**Cmd-,**).
-2. In the "Anthropic API Key" section, click **Enter API Key…**.
-3. Paste your Anthropic API key (get one at https://console.anthropic.com).
-4. Right-click any clip and choose **Generate Brief**, or use the bulk-brief toolbar button when browsing a folder or in library mode.
-
-**Cost:** roughly **$0.005 per clip** at current Claude pricing. A 1,000-clip library costs about $5 to fully brief. Duplicate-content clips share one API call, so the real cost is often lower than the raw clip count suggests.
+See the [open issues](https://github.com/AmritusG/CrateRelease/issues) and each release's notes. In 0.17.0: dropping
+a folder can crash MaCrate when the app it was dragged from quits right after the drop (a macOS bug; drag from Finder
+or use **Add Folder…**).
 
 ---
 
@@ -125,82 +83,54 @@ If you want AI-generated briefs:
 
 | Shortcut | Action |
 |---|---|
-| `Cmd-,` | Open Settings window (backend + API key) |
-| `Cmd-J` | Open quick-prefs popover (display, filters, duplicate tools) |
+| `Cmd-,` | Settings window (API key, scan options) |
+| `Cmd-J` | View settings (grid fields, cell size, indicators) |
 | `Cmd-Shift-I` | Import briefs from JSON or CSV |
-| `Cmd-Z` | Undo rename (when a clip was just renamed) |
-| `Space` | Quick Look the selected clip |
-| `Cmd-Click` | Multi-select clips in the grid |
-| `Shift-Click` | Range-select clips |
+| `Cmd-Z` | Undo the last rename |
+| `Space` | Preview the selected clip |
+| `Cmd-Click` / `Shift-Click` | Add to the selection / select a range |
 
 ---
 
-## Sidecar file format
+## Where your data lives
 
-Crate writes one `.crate-meta.json` file per clip, named after the clip with a dot prefix:
+- **Sidecars:** each clip's metadata is also written beside it as `.<clip file name>.crate-meta.json`, so it moves
+  with the clip and survives a rebuilt library:
 
-```
-my-clip.mov
-.my-clip.crate-meta.json
-```
+  ```
+  my-clip.mov
+  .my-clip.mov.crate-meta.json
+  ```
 
-Sidecar contents:
+  ```json
+  {
+    "brief" : "vibrant geometric kaleidoscopic neon",
+    "bpm" : 128,
+    "clip_id" : "<SHA-256 of the first MiB>:<file size>",
+    "created_at" : 801234567.0,
+    "energy" : 7,
+    "genre" : "techno",
+    "mood" : "energetic",
+    "rating" : 4,
+    "tags" : ["geometric", "neon"],
+    "updated_at" : 801234567.0,
+    "version" : 1
+  }
+  ```
+- **Library database and settings:** `~/Library/Application Support/com.amritus.crate/` and the preferences domain
+  `com.amritus.crate`. Thumbnails are a cache in `~/Library/Caches/com.amritus.crate/`.
+- **Stashes:** `.crate-stashes.json` in each library folder.
 
-```json
-{
-  "clip_id": "<xxhash3-128 of clip content>",
-  "version": 1,
-  "rating": 4,
-  "tags": ["geometric", "neon", "high-energy"],
-  "bpm": 128,
-  "mood": "energetic",
-  "genre": "techno",
-  "energy": 78,
-  "brief": "vibrant geometric kaleidoscopic neon",
-  "updated_at": 1716800000
-}
-```
-
-Sidecars are portable. Copy a clip to a new machine and its sidecar comes with it; Crate picks up the metadata on first index.
-
----
-
-## Pre-release status
-
-Crate is at version **0.6.33.2** — actively used by its developer but not yet considered 1.0-stable. Behaviors may change, file formats are stable but not frozen, and you may find sharp edges.
-
-Please file issues at https://github.com/AmritusG/CrateRelease/issues.
-
----
-
-## What's currently in the box
-
-This release (0.6.33.2) includes:
-
-- Library indexing with FSEvents-based live updates
-- Multi-root library support (any number of folders/drives)
-- Path-keyed schema (v8) — cross-root duplicates are first-class rather than collapsed
-- Full-text search with FTS5
-- Filter chips for rating / tags / BPM / mood / genre / energy / duplicates
-- Single-clip brief generation with Claude
-- Bulk-brief with folder scope or library-match scope, deduplicated by content hash
-- Brief import from JSON (3 shapes) and CSV
-- Duplicate detection with cell badges, info-panel disclosure, library-wide duplicate sheet
-- In-grid navigation between duplicate siblings
-- Settings window with Anthropic API key management
-- Sidecar-based metadata storage (portable, version-controllable)
-- DXV2.2 / DXV3 / HAP / standard codec support
+Everything stays on your Mac. The only network traffic is to Anthropic when you ask for a brief (your key, your
+request) and to Resolume Arena when you send a clip.
 
 ---
 
 ## Credits
 
-Built by Amrit Rosell with extensive collaboration with Claude (Anthropic).
-
----
+Built by Amrit Rosell, with Claude (Anthropic). MaCrate ▸ Acknowledgements lists every library it uses and its
+licence.
 
 ## Source code
 
-This repository (`CrateRelease`) is a **binary distribution channel** for Crate. The source code lives in a separate private repository and is not currently public.
-
-The DMG distributed here is free to download and use.
+This repository is the binary distribution channel for MaCrate. The DMG is free to download and use.
