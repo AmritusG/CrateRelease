@@ -4,9 +4,9 @@ A clip library for VJs and visual artists on macOS. Point it at your video folde
 brief and measure your clips, then send them to Resolume Arena. No import step: MaCrate watches the folders and keeps
 up as files change.
 
-**Current version: 0.17.2** — [download MaCrate-0.17.2.dmg](https://github.com/AmritusG/CrateRelease/releases/download/v0.17.2/MaCrate-0.17.2.dmg)
-([SHA-256](https://github.com/AmritusG/CrateRelease/releases/download/v0.17.2/MaCrate-0.17.2.dmg.sha256),
-[release notes](https://github.com/AmritusG/CrateRelease/releases/tag/v0.17.2)).
+**Current version: 0.17.3** — [download MaCrate-0.17.3.dmg](https://github.com/AmritusG/CrateRelease/releases/download/v0.17.3/MaCrate-0.17.3.dmg)
+([SHA-256](https://github.com/AmritusG/CrateRelease/releases/download/v0.17.3/MaCrate-0.17.3.dmg.sha256),
+[release notes](https://github.com/AmritusG/CrateRelease/releases/tag/v0.17.3)).
 Universal (Apple Silicon and Intel), macOS 14 or later, signed and notarized.
 
 0.17.0 is MaCrate rebuilt in Rust on the cross-platform core it shares with Glance. It reads and writes the same
@@ -55,12 +55,12 @@ Arena, locally or over the network, optionally triggering it after it loads.
 
 ## Installation
 
-1. Download `MaCrate-0.17.2.dmg` from the [latest release](https://github.com/AmritusG/CrateRelease/releases/latest).
+1. Download `MaCrate-0.17.3.dmg` from the [latest release](https://github.com/AmritusG/CrateRelease/releases/latest).
 2. (Optional) Verify it:
    ```bash
-   shasum -a 256 MaCrate-0.17.2.dmg
+   shasum -a 256 MaCrate-0.17.3.dmg
    ```
-   Compare with `MaCrate-0.17.2.dmg.sha256` in the release.
+   Compare with `MaCrate-0.17.3.dmg.sha256` in the release.
 3. Open the DMG and drag **MaCrate** to **Applications**.
 
 The DMG and the app are signed with an Apple Developer ID (Team `3A3L2C6DFB`) and notarized by Apple, so Gatekeeper
@@ -73,7 +73,7 @@ over it; your library and settings stay as they are.
 
 ## Known issues
 
-See the [open issues](https://github.com/AmritusG/CrateRelease/issues) and each release's notes. In 0.17.2 (and 0.17.0–0.17.1): dropping
+See the [open issues](https://github.com/AmritusG/CrateRelease/issues) and each release's notes. In 0.17.3 (and 0.17.0–0.17.2): dropping
 a folder can crash MaCrate when the app it was dragged from quits right after the drop (a macOS bug; drag from Finder
 or use **Add Folder…**).
 
